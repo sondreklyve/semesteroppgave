@@ -6,13 +6,14 @@ v0 = 0  # Initial velocity
 a_theta = 0  # Initial radial acceleration
 theta_list = [phi]  # Initialize list of angles
 v_list = [v0]  # Initialize list of velocities
+theta_k_friction_list = []  # Initialize list of angles after kinetic friction
 
 R = 0.5  # Radius of track
 r = 0.02  # Radius of object
 g = 9.81  # Gravitational acceleration
-c = 0  # Constant determining moment of inertia (c = 0 means no rotation, hence no frictional force)
-mu_s = 0  # Static frictional coefficient
-mu_k = 0  # Kinetic frictional coefficient
+c = 1  # Constant determining moment of inertia (c = 0 means no rotation, hence no frictional force)
+mu_s = 10000  # Static frictional coefficient
+mu_k = 0.3  # Kinetic frictional coefficient
 
 delta_t = 0.0001
 
@@ -35,6 +36,7 @@ while normal_acceleration(theta_list[i], v_list[i], g, R) > 0:  # Loop breaks wh
     if friction_threshold(g, theta_list[i], v_list[i], (R + r), mu_s, a_theta):
         # Acceleration is calculated using kinetic friction coefficient
         a_theta = g * np.sin(theta_list[i]) - (g * np.cos(theta_list[i]) - v_list[i] ** 2 / r) * mu_k
+        theta_k_friction_list.append(theta_list[i])  # Adds the angle to this list if there is kinetic friction
     else:
         # Acceleration is calculated assuming pure roll, since the frictional force is sufficient
         a_theta = 9.81 * np.sin(theta_list[i]) / (1 + c)
@@ -48,3 +50,7 @@ while normal_acceleration(theta_list[i], v_list[i], g, R) > 0:  # Loop breaks wh
 numerical_theta_crit = np.rad2deg(theta_list[-1])  # Gets last angle in the list, and converts it to degrees
 
 print(f"Critical angle using Euler's method: {numerical_theta_crit}°")
+
+if theta_k_friction_list:  # Only runs if there is kinetic friction
+    theta_k_friction = np.rad2deg(theta_k_friction_list[0])  # Gets the first angle after kinetic friction, and converts it to degrees
+    print(f"Angle when kinetic friction starts using Euler's method: {theta_k_friction}°")
