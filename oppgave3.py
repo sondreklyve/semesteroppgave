@@ -11,9 +11,9 @@ theta_k_friction_list = []  # Initialize list of angles after kinetic friction
 R = 0.5  # Radius of track
 r = 0.02  # Radius of object
 g = 9.81  # Gravitational acceleration
-c = 1  # Constant determining moment of inertia (c = 0 means no rotation, hence no frictional force)
-mu_s = 0.6  # Static frictional coefficient
-mu_k = 0.1  # Kinetic frictional coefficient
+c = 2/5  # Constant determining moment of inertia
+mu_s = 1  # Static frictional coefficient
+mu_k = 0.5  # Kinetic frictional coefficient
 
 delta_t = 0.0001
 
@@ -31,12 +31,15 @@ def friction_threshold(g, theta, v, r, R, mu, a_theta):
 
 
 i = 0  # Initialize counting variable
+check = False  # Will become True if kinetic friction kicks in to not go back to static friction
+
 while normal_acceleration(theta_list[i], v_list[i], g, R) > 0:  # Loop breaks when normal force exceeds 0
 
-    if friction_threshold(g, theta_list[i], v_list[i], R, r, mu_s, a_list[i]):
+    if friction_threshold(g, theta_list[i], v_list[i], R, r, mu_s, a_list[i]) or check:
         # Acceleration is calculated using kinetic friction coefficient
         a_list.append(g * np.sin(theta_list[i]) - (g * np.cos(theta_list[i]) - v_list[i] ** 2 / (R + r)) * mu_k)
         theta_k_friction_list.append(theta_list[i])  # Adds the angle to this list if there is kinetic friction
+        check = True
     else:
         # Acceleration is calculated assuming pure roll, since the frictional force is sufficient
         a_list.append(9.81 * np.sin(theta_list[i]) / (1 + c))
