@@ -8,15 +8,16 @@ a_list = [0]  # Initial radial acceleration
 theta_list = [phi]  # Initialize list of angles
 v_list = [v0]  # Initialize list of velocities
 theta_k_friction_list = []  # Initialize list of angles after kinetic friction
-E_list = []  # Initialize list of mechanical energy
 
 R = 0.5  # Radius of track
 r = 0.02  # Radius of object
 g = 9.81  # Gravitational acceleration
-c = 2/5  # Constant determining moment of inertia (c = 0 means no rotation, hence no frictional force)
-mu_s = 0.2  # Static frictional coefficient
-mu_k = 0.1  # Kinetic frictional coefficient
+c = 2/5  # Constant determining moment of inertia
+mu_s = 0  # Static frictional coefficient
+mu_k = 0  # Kinetic frictional coefficient
 m = 0.167  # Mass of object
+
+E_list = [m * (g * (R+r) * np.cos(phi) + .5 * v0 ** 2 * (1+c))]  # Initialize list of mechanical energy
 
 delta_t = 0.0001
 
@@ -34,22 +35,22 @@ def friction_threshold(g, theta, v, r, mu, a_theta):
 
 
 i = 0  # Initialize counting variable
-# check = False
+check = False  # Will become True if kinetic friction kicks in to not go back to static friction
 
 while normal_acceleration(theta_list[i], v_list[i], g, R) > 0:  # Loop breaks when normal force exceeds 0
 
-    if friction_threshold(g, theta_list[i], v_list[i], (R + r), mu_s, a_list[i]):
+    if friction_threshold(g, theta_list[i], v_list[i], (R + r), mu_s, a_list[i]) or check:
         # Acceleration is calculated using kinetic friction coefficient
         a_list.append(g * np.sin(theta_list[i]) - (g * np.cos(theta_list[i]) - v_list[i] ** 2 / (R+r)) * mu_k)
         theta_k_friction_list.append(theta_list[i])  # Adds the angle to this list if there is kinetic friction
-        # check = True
+        check = True
     else:
         # Acceleration is calculated assuming pure roll, since the frictional force is sufficient
         a_list.append(9.81 * np.sin(theta_list[i]) / (1 + c))
 
     theta_list.append(theta_list[i] + v_list[i] * delta_t / (R + r))  # Using Euler's method to find next angle
     v_list.append(v_list[i] + a_list[i] * delta_t)  # Using Euler's method to find next velocity
-    E_list.append(m*(g*(R+r)*np.cos(theta_list[i]) + .5*v_list[i]**2*(1+c)))  # Finding the mechanical energy
+    E_list.append(m * (g * (R+r) * np.cos(theta_list[i]) + .5 * v_list[i] ** 2 * (1+c)))  # Finding the mechanical energy
 
     i += 1  # Increment counting variable
 
@@ -63,13 +64,28 @@ if theta_k_friction_list:  # Only runs if there is kinetic friction
     print(f"Angle when kinetic friction starts using Euler's method: {theta_k_friction}°")
 
 
-x_v = np.linspace(0,1,len(v_list))
-x_a = np.linspace(0,1,len(a_list))
-x_E = np.linspace(0,1,len(E_list))
+t = len(v_list) * delta_t  # Finds the total time in seconds before the object loses contact
+x_v = np.linspace(0,t,len(v_list))
+x_a = np.linspace(0,t,len(a_list))
+x_E = np.linspace(0,t,len(E_list))
 
-
+""" Making plots with velocity, acceleration and mechanical energy """
 plt.figure(0)
 plt.plot(x_v, v_list)
-plt.plot(x_a, a_list)
-plt.plot(x_E, E_list, 'r--')
+plt.title('Velocity')
+plt.xlabel('t: s')
+plt.ylabel('v: m/s')
+
+plt.figure(1)
+plt.plot(x_a, a_list, 'r')
+plt.title('Acceleration')
+plt.xlabel('t: s')
+plt.ylabel('a: m/s^2')
+
+plt.figure(2)
+plt.plot(x_E, E_list, 'y')
+plt.title('Total mechanical energy')
+plt.xlabel('t: s')
+plt.ylabel('E: J')
+
 plt.show()
