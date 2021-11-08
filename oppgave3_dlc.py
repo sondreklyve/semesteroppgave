@@ -1,7 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
-phi = 0.01  # Initial angle in degrees 
+phi = 5  # Initial angle in degrees 
 phi = np.deg2rad(phi)  # Converts phi to radians so it works with numpy functions
 v0 = 0  # Initial velocity
 a_list = [0]  # Initial radial acceleration
@@ -10,16 +10,16 @@ v_list = [v0]  # Initialize list of velocities
 theta_k_friction_list = []  # Initialize list of angles after kinetic friction
 
 R = 0.5  # Radius of track
-r = 0.02  # Radius of object
+r = 0.1  # Radius of object
 g = 9.81  # Gravitational acceleration
-c = 2/5  # Constant determining moment of inertia
-mu_s = 0  # Static frictional coefficient
-mu_k = 0  # Kinetic frictional coefficient
-m = 0.167  # Mass of object
+c = .5  # Constant determining moment of inertia
+mu_s = 0.5  # Static frictional coefficient
+mu_k = 0.25  # Kinetic frictional coefficient
+m = 1  # Mass of object
 
 E_list = [m * (g * (R+r) * np.cos(phi) + .5 * v0 ** 2 * (1+c))]  # Initialize list of mechanical energy
 
-delta_t = 0.0001
+delta_t = 0.00001
 
 
 def normal_acceleration(theta, v1, g, R):
@@ -27,9 +27,9 @@ def normal_acceleration(theta, v1, g, R):
     return g * np.cos(theta) - v1 ** 2 / (R + r)
 
 
-def friction_threshold(g, theta, v, r, mu, a_theta):
+def friction_threshold(g, theta, v, r, mu, c, a_theta):
     """ Returns whether the normal force is too small, and the object starts slipping"""
-    if a_theta < mu * (g * np.cos(theta) - v ** 2 / r):
+    if a_theta * c <= mu * (g * np.cos(theta) - v ** 2 / r):
         return False  # Object does not slip, hence static friction coefficient
     return True  # Object does slip, hence kinetic friction coefficient
 
@@ -39,9 +39,9 @@ check = False  # Will become True if kinetic friction kicks in to not go back to
 
 while normal_acceleration(theta_list[i], v_list[i], g, R) > 0:  # Loop breaks when normal force exceeds 0
 
-    if friction_threshold(g, theta_list[i], v_list[i], (R + r), mu_s, a_list[i]) or check:
+    if friction_threshold(g, theta_list[i], v_list[i], (R + r), mu_s, c, a_list[i]) or check:
         # Acceleration is calculated using kinetic friction coefficient
-        a_list.append(g * np.sin(theta_list[i]) - (g * np.cos(theta_list[i]) - v_list[i] ** 2 / (R+r)) * mu_k)
+        a_list.append(g * np.sin(theta_list[i]) - (g * np.cos(theta_list[i]) - (v_list[i]) ** 2 / (R+r)) * mu_k)
         theta_k_friction_list.append(theta_list[i])  # Adds the angle to this list if there is kinetic friction
         check = True
     else:
@@ -49,7 +49,7 @@ while normal_acceleration(theta_list[i], v_list[i], g, R) > 0:  # Loop breaks wh
         a_list.append(9.81 * np.sin(theta_list[i]) / (1 + c))
 
     theta_list.append(theta_list[i] + v_list[i] * delta_t / (R + r))  # Using Euler's method to find next angle
-    v_list.append(v_list[i] + a_list[i] * delta_t)  # Using Euler's method to find next velocity
+    v_list.append((v_list[i] + a_list[i] * delta_t))  # Using Euler's method to find next velocity
     E_list.append(m * (g * (R+r) * np.cos(theta_list[i]) + .5 * v_list[i] ** 2 * (1+c)))  # Finding the mechanical energy
 
     i += 1  # Increment counting variable

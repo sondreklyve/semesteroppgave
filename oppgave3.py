@@ -25,7 +25,7 @@ def normal_acceleration(theta, v1, g, R):
 
 def friction_threshold(g, theta, v, r, R, mu, a_theta):
     """ Returns whether the normal force is too small, and the object starts slipping"""
-    if a_theta <= mu * (g * np.cos(theta) - v ** 2 / (R + r)):
+    if a_theta * c <= mu * (g * np.cos(theta) - v ** 2 / (R + r)):
         return False  # Object does not slip, hence static friction coefficient
     return True  # Object does slip, hence kinetic friction coefficient
 
