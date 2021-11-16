@@ -1,6 +1,6 @@
 import numpy as np
 
-phi = 0.01  # Initial angle in degrees
+phi = 0.1  # Initial angle in degrees
 phi = np.deg2rad(phi)  # Converts phi to radians so it works with numpy functions
 v0 = 0  # Initial velocity
 a_list = [0]  # Initialize list for acceleration
@@ -11,9 +11,9 @@ theta_k_friction_list = []  # Initialize list of angles after kinetic friction
 R = 0.5  # Radius of track
 r = 0.02  # Radius of object
 g = 9.81  # Gravitational acceleration
-c = 2/5  # Constant determining moment of inertia
-mu_s = 1  # Static frictional coefficient
-mu_k = 0.5  # Kinetic frictional coefficient
+c = 1  # Constant determining moment of inertia
+mu_s = 0.3  # Static frictional coefficient
+mu_k = 0.2  # Kinetic frictional coefficient
 
 delta_t = 0.0001
 
