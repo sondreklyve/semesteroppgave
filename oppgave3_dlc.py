@@ -93,10 +93,4 @@ plt.title('Total mekanisk energi')
 plt.xlabel('tid: s')
 plt.ylabel('Energi: J')
 
-plt.figure(3)
-plt.plot(x_E, omega_list, 'g')
-
 plt.show()
-
-
-print(E_list[0] - E_list[-1])
