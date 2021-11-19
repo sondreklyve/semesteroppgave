@@ -1,7 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
-phi = 5  # Initial angle in degrees 
+phi = 0.001  # Initial angle in degrees (program will loop if phi = 0) 
 phi = np.deg2rad(phi)  # Converts phi to radians so it works with numpy functions
 v0 = 0  # Initial velocity
 theta_list = [phi]  # Initialize list of angles
@@ -11,9 +11,9 @@ omega_0 = 0  # Initial angular velocity
 omega_list = [omega_0]  # Intialize list of angular velocities
 
 R = 0.5  # Radius of track
-r = 0.1  # Radius of object
+r = 0.0422  # Radius of object
 g = 9.81  # Gravitational acceleration
-c = .5  # Constant determining moment of inertia
+c = 0.5  # Constant determining moment of inertia
 mu_s = 0.5  # Static frictional coefficient
 mu_k = 0.25  # Kinetic frictional coefficient
 m = 1  # Mass of object
@@ -73,24 +73,34 @@ t = len(v_list) * delta_t  # Finds the total time in seconds before the object l
 x_v = np.linspace(0,t,len(v_list))
 x_a = np.linspace(0,t,len(a_list))
 x_E = np.linspace(0,t,len(E_list))
+x_omega = np.linspace(0,t,len(omega_list))
 
-""" Making plots with velocity, acceleration and mechanical energy """
 plt.figure(0)
 plt.plot(x_v, v_list)
 plt.title('Hastighet')
 plt.xlabel('tid: s')
 plt.ylabel('hastighet: m/s')
+plt.grid()
 
 plt.figure(1)
 plt.plot(x_a, a_list, 'r')
 plt.title('Akselerasjon')
 plt.xlabel('tid: s')
 plt.ylabel('akselerasjon: m/s^2')
+plt.grid()
 
 plt.figure(2)
 plt.plot(x_E, E_list, 'y')
 plt.title('Total mekanisk energi')
 plt.xlabel('tid: s')
 plt.ylabel('Energi: J')
+plt.grid()
+
+plt.figure(3)
+plt.plot(x_omega, omega_list, 'g')
+plt.title('Vinkelhastighet i legemet')
+plt.xlabel('tid: s')
+plt.ylabel('vinkelhastighet: rad/s')
+plt.grid()
 
 plt.show()
