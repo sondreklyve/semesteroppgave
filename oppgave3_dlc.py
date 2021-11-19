@@ -84,8 +84,8 @@ plt.ylabel('a: m/s^2')
 
 plt.figure(2)
 plt.plot(x_E, E_list, 'y')
-plt.title('Total mechanical energy')
-plt.xlabel('t: s')
-plt.ylabel('E: J')
+plt.title('Total mekanisk energi')
+plt.xlabel('tid: s')
+plt.ylabel('Energi: J')
 
 plt.show()
