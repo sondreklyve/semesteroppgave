@@ -7,7 +7,7 @@ v_list = [v0]  # Initialize list of velocities
 
 R = 0.5  # Radius of track
 m = 0.168  # Mass of object
-g = 9.81  # Gravitational acceleration
+g = 5.63  # Gravitational acceleration
 delta_t = 0.0001
 
 
